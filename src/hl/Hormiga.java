@@ -2,7 +2,8 @@ package hl;
 
 public class Hormiga implements IHormiga {
     // Los posibles giros que puede hacer una hormiga.
-    static enum Giro { IZQUIERDA, DERECHA, MEDIA_VUELTA, SIN_GIRO }
+    // Removido porque debe estar definido en IHormiga
+    // static enum Giro { IZQUIERDA, DERECHA, MEDIA_VUELTA, SIN_GIRO }
     
     // Atributos de la hormiga
     private int x, y;  // Posición de la hormiga
@@ -37,23 +38,20 @@ public class Hormiga implements IHormiga {
      *  @throws IllegalStateException si el color de la casilla no es 
      *  uno de lo que la hormiga reconoce en sus instrucciones de actuacion.
      */
-    public Giro girar(ICuadricula cuadricula) {
-        // Obtener el color de la casilla actual
-        Color colorCasilla = cuadricula.getColor(this.x, this.y);
+    public IHormiga.Giro girar(ICuadricula cuadricula) {
+        // Obtener el color de la casilla actual usando el método de la interfaz
+        Casilla casilla = cuadricula.casilla(this.x, this.y);
         
-        switch (colorCasilla) {
-            case BLANCO:
-                // En casilla blanca: girar a la derecha
-                this.orientacion = this.orientacion.girarDerecha();
-                return Giro.DERECHA;
-                
-            case NEGRO:
-                // En casilla negra: girar a la izquierda
-                this.orientacion = this.orientacion.girarIzquierda();
-                return Giro.IZQUIERDA;
-                
-            default:
-                throw new IllegalStateException("Color de casilla no reconocido: " + colorCasilla);
+        // Asumir que Casilla tiene un método para obtener su estado/color
+        // Implementación basada en reglas clásicas de Langton's Ant
+        if (casilla.color() == 0) {
+            // En casilla blanca: girar a la derecha
+            this.orientacion = this.orientacion.girarDerecha();
+            return IHormiga.Giro.DERECHA;
+        } else {
+            // En casilla negra/no blanca: girar a la izquierda
+            this.orientacion = this.orientacion.girarIzquierda();
+            return IHormiga.Giro.IZQUIERDA;
         }
     }
 
@@ -64,17 +62,11 @@ public class Hormiga implements IHormiga {
     *  se utiliza para obtener la casilla.
     */
     public void cambiarColor(ICuadricula cuadricula) {
-        // Obtener el color actual de la casilla
-        Color colorActual = cuadricula.getColor(this.x, this.y);
+        // Obtener la casilla actual
+        Casilla casilla = cuadricula.casilla(this.x, this.y);
         
-        // Cambiar al color opuesto
-        if (colorActual == Color.BLANCO) {
-            cuadricula.setColor(this.x, this.y, Color.NEGRO);
-        } else if (colorActual == Color.NEGRO) {
-            cuadricula.setColor(this.x, this.y, Color.BLANCO);
-        } else {
-            throw new IllegalStateException("Color de casilla no reconocido para cambiar: " + colorActual);
-        }
+        // Cambiar el estado de la casilla
+        casilla.cambiarColor();
     }
     
     /** `Esta` hormiga avanza una casilla en el sentido de su orientacion
@@ -116,7 +108,7 @@ public class Hormiga implements IHormiga {
      * Devuelve las coordenadas de la hormiga.  
      * @return como un array { x, y } siendo x e y las coordenadas de la hormiga en el plano 2D
      */
-    int[] coordenadas() {
+    public int[] coordenadas() {
         return new int[]{this.x, this.y};
     }
     
@@ -124,7 +116,7 @@ public class Hormiga implements IHormiga {
      * Por ejemplo: "res/ant_1.png" 
      * @return la ruta relativa al archivo
      */
-    String rutaDeLaImagen() {
+    public String rutaDeLaImagen() {
         return "res/ant_1.png";
     }
     
@@ -133,8 +125,25 @@ public class Hormiga implements IHormiga {
      * para que, al dibujar el dibujo de la hormiga quede orientado correctamente
      * @return el angulo en grados de la orientacion de `esta` hormiga 
      */
-    int getAnguloEnGrados() {
+    public int getAnguloEnGrados() {
         return this.orientacion.getAnguloEnGrados();
     }
-
+    
+    // Métodos adicionales útiles
+    public Orientacion getOrientacion() {
+        return this.orientacion;
+    }
+    
+    public int getX() {
+        return this.x;
+    }
+    
+    public int getY() {
+        return this.y;
+    }
+    
+    @Override
+    public String toString() {
+        return "Hormiga[x=" + x + ", y=" + y + ", orientacion=" + orientacion + "]";
+    }
 }
