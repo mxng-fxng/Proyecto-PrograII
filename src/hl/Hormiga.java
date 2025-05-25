@@ -10,7 +10,15 @@ public class Hormiga implements IHormiga {
     private Orientacion orientacion;  // Orientación actual
     private int contadorTick;  // Para controlar el ciclo de tick
     
-    // Constructor
+    // Constructor por defecto (requerido por los tests)
+    public Hormiga() {
+        this.x = 0;
+        this.y = 0;
+        this.orientacion = Orientacion.IZQUIERDA; // Usar la constante estática disponible
+        this.contadorTick = 0;
+    }
+    
+    // Constructor con parámetros
     public Hormiga(int x, int y, Orientacion orientacion) {
         this.x = x;
         this.y = y;
