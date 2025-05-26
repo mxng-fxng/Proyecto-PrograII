@@ -27,7 +27,7 @@ public class CasillaTresColores extends Casilla {
         }
         
         // Llamar al constructor padre con coordenadas por defecto y color determinado
-        super(0, 0, color);
+        super();
     }
     
     /** Cambia el color de 'esta' casilla.
