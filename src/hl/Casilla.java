@@ -15,6 +15,10 @@ public class Casilla {
         this(x,y,0);
     }
 
+    Casilla(){
+        this(0,0,0);
+    }
+
     /** Cambiar el color de ‘esta‘ casilla
     *
     * Alternando entre el blanco y el negro, codificados respectivamente por 0 y 1.
