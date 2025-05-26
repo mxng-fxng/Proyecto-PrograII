@@ -6,10 +6,10 @@ import hl.ICuadricula;
 import hl.IHormiga.Giro;
 
 public class CuadriculaTresColores implements ICuadricula {
-    // Tamaño de la matriz que guarda las casillas, DIMxDIM
+    // Tamanho de la matriz que guarda las casillas, DIMxDIM
     public static final int DIM = 11;
     
-    // Array bidimensional de tamaño DIMxDIM que guarda las casillas
+    // Array bidimensional de tamanho DIMxDIM que guarda las casillas
     protected CasillaTresColores[][] casillas;
     
     /** Construye e inicializa una nueva cuadricula */
@@ -27,15 +27,17 @@ public class CuadriculaTresColores implements ICuadricula {
     /** Devuelve la casilla de 'esta' cuadricula en los indices de fila y columna dados por i y j.
      * 
      * Se supone que los indices son las coordenadas (x, y) de la casilla en un plano 2D.
-     * @throws IndexOutOfBoundsException cuando i o j no estan en el rango [0,DIM) 
+     * @throws IndexOutOfBoundsException cuando i o j no estan en el rango [0,Dim) 
      */
     @Override
     public Casilla casilla(int i, int j) {
+        // Verificar que los índices estén en el rango válido
         if (i < 0 || i >= DIM || j < 0 || j >= DIM) {
             throw new IndexOutOfBoundsException(
-                String.format("Coordenadas (%d, %d) fuera del rango [0, %d)", i, j, DIM)
+                String.format("Índices fuera de rango: (%d, %d). Rango válido: [0, %d)", i, j, DIM)
             );
         }
+        
         return casillas[i][j];
     }
 }

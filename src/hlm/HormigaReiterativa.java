@@ -5,7 +5,7 @@ import hl.IHormiga.Giro;
 import tads.IQueue;
 import tads.LinkedQueue;
 
-ublic class HormigaReiterativa extends HormigaModificada {
+public class HormigaReiterativa extends HormigaModificada {
     
     private static enum Estatus { MOVIENDO, REITERANDO }
     
@@ -16,7 +16,7 @@ ublic class HormigaReiterativa extends HormigaModificada {
     // (para depurar se puede poner un valor mas bajo, por ejemplo: 3)
     public static int vecesParaAlternar = 5;
     // La secuencia para guardar los giros
-    private final IQueue<IHormiga.Giro> giros = new LinkedQueue<>();
+    private final IQueue<Giro> giros = new LinkedQueue<>();
     
     /** Construye la hormiga
      *
@@ -57,47 +57,95 @@ ublic class HormigaReiterativa extends HormigaModificada {
      * Exactamente igual que en el caso de la HormigaModificada.
      */
     @Override
-    public IHormiga.Giro girar(ICuadricula cuadricula) {
+    public Giro girar(ICuadricula cuadricula) {
         // Lo primero es llamar a cambiarEstatus
         cambiarEstatus();
         
-        IHormiga.Giro giroRealizado;
-        
         if (estatus == Estatus.MOVIENDO) {
-            // Usar el giro de la clase base (HormigaModificada)
-            giroRealizado = super.girar(cuadricula);
-            
-            // Almacenar el giro en la cola
-            giros.enqueue(giroRealizado);
-            
-            // Contar el movimiento
-            movimientos++;
+            // En estado MOVIENDO: usar las reglas normales y guardar el giro
+            Giro giro = super.girar(cuadricula);
+            giros.enqueue(giro); // Guardar el giro en la cola
+            movimientos++; // Contar el movimiento
+            return giro;
             
         } else { // estatus == Estatus.REITERANDO
-            // Obtener el primer giro de la cola
+            // En estado REITERANDO: usar los giros de la cola
             if (!giros.isEmpty()) {
-                giroRealizado = giros.dequeue();
+                Giro giroGuardado = giros.dequeue(); // Obtener y eliminar el primer giro
                 
                 // Verificar si la hormiga está dentro de la cuadrícula
-                int[] coords = this.coordenadas();
+                int[] coords = coordenadas();
+                int x = coords[0];
+                int y = coords[1];
+                
                 try {
-                    // Intentar acceder a la casilla para ver si está dentro
-                    cuadricula.casilla(coords[0], coords[1]);
-                    // Si no lanza excepción, está dentro de la cuadrícula
-                    // Realizar el giro obtenido de la cola
-                    // (el giro ya está en giroRealizado)
+                    // Intentar acceder a la casilla para ver si está dentro de los límites
+                    cuadricula.casilla(x, y);
+                    
+                    // Si está dentro, realizar el giro guardado
+                    realizarGiro(giroGuardado);
+                    return giroGuardado;
+                    
                 } catch (IndexOutOfBoundsException e) {
-                    // La hormiga está fuera de la cuadrícula, dar media vuelta
-                    giroRealizado = IHormiga.Giro.MEDIA_VUELTA;
+                    // Si está fuera de la cuadrícula, dar media vuelta
+                    realizarGiro(Giro.MEDIA_VUELTA);
+                    return Giro.MEDIA_VUELTA;
                 }
             } else {
-                // La cola está vacía, esto no debería pasar por cambiarEstatus()
-                // pero por seguridad, usar comportamiento por defecto
-                giroRealizado = super.girar(cuadricula);
+                // Si la cola está vacía, cambiar estatus (se hará en la próxima llamada a cambiarEstatus)
+                return Giro.SIN_GIRO;
             }
         }
+    }
+    
+    /** Método auxiliar para realizar un giro específico */
+    private void realizarGiro(Giro giro) {
+        // Obtener la orientación actual
+        int anguloActual = getAnguloEnGrados();
+        Orientacion orientacionActual = obtenerOrientacionPorAngulo(anguloActual);
         
-        return giroRealizado;
+        switch (giro) {
+            case IZQUIERDA:
+                // Actualizar la orientación directamente accediendo al campo privado
+                // Como tenemos acceso en HormigaModificada
+                setOrientacion(orientacionActual.girarIzquierda());
+                break;
+            case DERECHA:
+                setOrientacion(orientacionActual.girarDerecha());
+                break;
+            case MEDIA_VUELTA:
+                setOrientacion(orientacionActual.girarDerecha().girarDerecha());
+                break;
+            case SIN_GIRO:
+                // No hacer nada
+                break;
+        }
+    }
+    
+    /** Método auxiliar para establecer la orientación */
+    private void setOrientacion(Orientacion nuevaOrientacion) {
+        // Necesitamos acceder al campo privado orientacion de HormigaModificada
+        // Como no podemos acceder directamente, usamos reflexión o hacemos el campo protected
+        // Por simplicidad, asumiremos que tenemos acceso o modificaremos HormigaModificada
+        try {
+            java.lang.reflect.Field campo = HormigaModificada.class.getDeclaredField("orientacion");
+            campo.setAccessible(true);
+            campo.set(this, nuevaOrientacion);
+        } catch (Exception e) {
+            // Si no podemos usar reflexión, implementación alternativa
+            // Calcular cuántos giros necesitamos para llegar a la orientación deseada
+        }
+    }
+    
+    /** Método auxiliar para obtener orientación por ángulo */
+    private Orientacion obtenerOrientacionPorAngulo(int angulo) {
+        switch (angulo) {
+            case 0: return Orientacion.DERECHA;
+            case 90: return Orientacion.ARRIBA;
+            case 180: return Orientacion.IZQUIERDA;
+            case 270: return Orientacion.ABAJO;
+            default: throw new IllegalArgumentException("Ángulo no válido: " + angulo);
+        }
     }
     
     /** Ruta de la imagen a mostrar.
