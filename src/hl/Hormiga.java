@@ -136,5 +136,22 @@ public class Hormiga implements IHormiga {
     public int getAnguloEnGrados() {
         return this.orientacion.getAnguloEnGrados();
     }
-
+    
+    // Métodos adicionales útiles
+    public Orientacion getOrientacion() {
+        return this.orientacion;
+    }
+    
+    public int getX() {
+        return this.x;
+    }
+    
+    public int getY() {
+        return this.y;
+    }
+    
+    @Override
+    public String toString() {
+        return "Hormiga[x=" + x + ", y=" + y + ", orientacion=" + orientacion + "]";
+    }
 }
