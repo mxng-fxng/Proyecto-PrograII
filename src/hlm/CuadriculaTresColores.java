@@ -10,7 +10,7 @@ public class CuadriculaTresColores implements ICuadricula {
     public static final int DIM = 11;
     
     // Array bidimensional de tamanho DIMxDIM que guarda las casillas
-    protected CasillaTresColores[][] casillas;
+    CasillaTresColores[][] casillas;
     
     /** Construye e inicializa una nueva cuadricula */
     public CuadriculaTresColores() {
