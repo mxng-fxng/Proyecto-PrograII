@@ -1,6 +1,10 @@
 package hl;
 
 public class Hormiga implements IHormiga {
+    // Los posibles giros que puede hacer una hormiga.
+    // Removido porque debe estar definido en IHormiga
+    // static enum Giro { IZQUIERDA, DERECHA, MEDIA_VUELTA, SIN_GIRO }
+    
     // Atributos de la hormiga
     private int x, y;  // Posición de la hormiga
     private Orientacion orientacion;  // Orientación actual
@@ -46,15 +50,16 @@ public class Hormiga implements IHormiga {
         // Obtener el color de la casilla actual usando el método de la interfaz
         Casilla casilla = cuadricula.casilla(this.x, this.y);
         
-        // CORREGIDO: Reglas de Langton's Ant invertidas según los tests
+        // Asumir que Casilla tiene un método para obtener su estado/color
+        // Implementación basada en reglas clásicas de Langton's Ant
         if (casilla.color() == 0) {
-            // En casilla blanca: girar a la IZQUIERDA (corregido)
-            this.orientacion = this.orientacion.girarIzquierda();
-            return IHormiga.Giro.IZQUIERDA;
-        } else {
-            // En casilla negra/no blanca: girar a la DERECHA (corregido)
+            // En casilla blanca: girar a la derecha
             this.orientacion = this.orientacion.girarDerecha();
             return IHormiga.Giro.DERECHA;
+        } else {
+            // En casilla negra/no blanca: girar a la izquierda
+            this.orientacion = this.orientacion.girarIzquierda();
+            return IHormiga.Giro.IZQUIERDA;
         }
     }
 
@@ -78,30 +83,8 @@ public class Hormiga implements IHormiga {
      *  mueva una casilla.
      * */
     public void avanzar() {
-        // CORREGIDO: Usar la orientación para mover la hormiga
-        // Necesitamos obtener los vectores unitarios de la orientación
-        // y aplicarlos correctamente según el sistema de coordenadas esperado
-        
-        // Basándose en los errores de los tests, parece que:
-        // - "arriba" debería incrementar Y
-        // - "abajo" debería decrementar Y
-        // - "derecha" debería incrementar X  
-        // - "izquierda" debería decrementar X
-        
-        switch(this.orientacion) {
-            case ARRIBA:
-                this.y++;  // Corregido: arriba incrementa Y
-                break;
-            case ABAJO:
-                this.y--;  // Corregido: abajo decrementa Y
-                break;
-            case DERECHA:
-                this.x++;  // derecha incrementa X
-                break;
-            case IZQUIERDA:
-                this.x--;  // izquierda decrementa X
-                break;
-        }
+        // Usar la orientación para mover la hormiga
+        this.orientacion.mover(this);
     }
     
     /** Llama sucesivamente y recurrentemente a los metodos girar, cambiarColor y avanzar
@@ -153,4 +136,5 @@ public class Hormiga implements IHormiga {
     public int getAnguloEnGrados() {
         return this.orientacion.getAnguloEnGrados();
     }
+
 }
