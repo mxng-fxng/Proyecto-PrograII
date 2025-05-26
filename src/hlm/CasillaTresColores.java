@@ -14,6 +14,8 @@ public class CasillaTresColores extends Casilla {
      * sera 2 y sera 0 en cualquier otro caso.
      */
     public CasillaTresColores() {
+        // Llamar al constructor padre con coordenadas por defecto y color determinado
+        super();
         // Determinar el color aleatorio primero
         int aleatorio = r.nextInt(100); // Entre 0 y 99 inclusive
         int color;
@@ -25,9 +27,6 @@ public class CasillaTresColores extends Casilla {
         } else {
             color = 0;
         }
-        
-        // Llamar al constructor padre con coordenadas por defecto y color determinado
-        super();
     }
     
     /** Cambia el color de 'esta' casilla.
