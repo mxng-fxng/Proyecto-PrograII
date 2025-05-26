@@ -10,12 +10,12 @@ public class Cuadricula implements ICuadricula {
     /** Construye e inicializa una nueva cuadricula
     */
     public Cuadricula() {
-        casillas = new Casilla[DIM][DIM];
+        casillas = new Casilla[DIM][DIM]; // crea la cuadricula, que es el conjunto de casillas
         
         // Inicializar cada casilla
-        for (int i = 0; i < DIM; i++) {
-            for (int j = 0; j < DIM; j++) {
-                casillas[i][j] = new Casilla();
+        for (int i = 0; i < DIM; i++) { //recorre las i
+            for (int j = 0; j < DIM; j++) { // recorre las j
+                casillas[i][j] = new Casilla(i, j); //le da a cada casilla (elemento del array), un par de coordenadas
             }
         }
     }
@@ -25,14 +25,14 @@ public class Cuadricula implements ICuadricula {
     * @throws IndexOutOfBoundsException cuando i o j no estan en el rango [0,Dim) */
     @Override
     public Casilla casilla(int i, int j) {
-        // Verificar que los índices estén en el rango válido
         if (i < 0 || i >= DIM) {
             throw new IndexOutOfBoundsException("Índice i fuera de rango: " + i + ". Debe estar en [0, " + DIM + ")");
         }
-        if (j < 0 || j >= DIM) {
+        else if (j < 0 || j >= DIM) {
             throw new IndexOutOfBoundsException("Índice j fuera de rango: " + j + ". Debe estar en [0, " + DIM + ")");
         }
-        
+        else {
         return casillas[i][j];
+        }
     }
 }

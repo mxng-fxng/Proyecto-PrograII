@@ -2,9 +2,17 @@ package hl;
 
 public class Casilla {
     private int color; // atributo privado tipo entero
+    private int x;
+    private int y;
 
-    Casilla (int color){
+    Casilla (int x, int y, int color){
+        this.x = x;
+        this.y = y;
         this.color = color;
+    }
+
+    Casilla (int x, int y){
+        this(x,y,0);
     }
 
     /** Cambiar el color de ‘esta‘ casilla
